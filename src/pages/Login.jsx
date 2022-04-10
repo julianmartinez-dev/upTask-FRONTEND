@@ -1,8 +1,6 @@
-import axios from "axios";
 import { useState } from "react"
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axiosClient from "../config/axiosClient.js";
-
 import Alert from "../components/Alert";
 
 
@@ -21,12 +19,11 @@ const Login = () => {
     setAlert({})
     try {
       const { data } = await axiosClient.post('/users/login', {email, password});
-      console.log(data)
+      localStorage.setItem("token", data.token);
     } catch (error) {
       setAlert({msg : error.response.data.msg, error : true})
     }
 
-    
   }
 
   const { msg } = alert;
