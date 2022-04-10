@@ -19,10 +19,14 @@ const Login = () => {
     }
     setAlert({})
     try {
-      const { data } = await axios.post('http://localhost:4000/users/login', {email, password})
+      const url = import.meta.env.VITE_BACKEND_URL;
+      const { data } = await axios.post(`${url}/api/users/login`, {
+        email,
+        password,
+      });
       console.log(data)
     } catch (error) {
-      setAlert({msg : error.message, error : true})
+      setAlert({msg : error.response.data.msg, error : true})
     }
 
     
