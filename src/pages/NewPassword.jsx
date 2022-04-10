@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import axios from "axios";
 import Alert from "../components/Alert";
+import axiosClient from "../config/axiosClient.js";
 
 const NewPassword = () => {
   
@@ -16,7 +17,7 @@ const NewPassword = () => {
     const checkToken = async () => {
       try {
         //Check if token is valid and user exists
-        await axios(`${import.meta.env.VITE_BACKEND_URL}/api/users/forgot-password/${token}`);
+        await axiosClient(`/users/forgot-password/${token}`)
         setValidToken(true) 
       } catch (error) {
         setAlert({ msg : error.response.data.msg, error: true })

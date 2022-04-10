@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import Alert from '../components/Alert';
 import axios from 'axios';
+import axiosClient from '../config/axiosClient.js';
 
 const Register = () => {
   const [name, setName] = useState('');
@@ -33,8 +34,7 @@ const Register = () => {
 
     //Send request to server
     try {
-      const url = import.meta.env.VITE_BACKEND_URL;
-      const { data } = await axios.post(`${url}/api/users`, {
+      const { data } = await axiosClient.post('/users', {
         name,
         email,
         password,
