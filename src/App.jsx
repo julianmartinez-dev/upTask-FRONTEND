@@ -9,6 +9,7 @@ import ForgotPassword from './pages/ForgotPassword';
 import NewPassword from './pages/NewPassword';
 import ConfirmAccount from './pages/ConfirmAccount';
 import Projects from './pages/Projects';
+import Project from './pages/Project';
 import NewProject from './pages/NewProject';
 
 function App() {
@@ -28,6 +29,7 @@ function App() {
             <Route path="/projects" element={<ProtectedRoute />}>
               <Route index element={<Projects />} />
               <Route path="new-project" element={<NewProject />} />
+              <Route path=":id" element={<Project />} />
             </Route>
           </Routes>
         </ProjectsProvider>
