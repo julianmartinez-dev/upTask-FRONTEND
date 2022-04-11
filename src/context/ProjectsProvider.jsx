@@ -6,7 +6,7 @@ const ProjectsContext = createContext();
 
 const ProjectsProvider = ({ children }) => {
   const [projects, setProjects] = useState([]);
-  const [project, setProject] = useState({})
+  const [project, setProject] = useState({});
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -35,13 +35,11 @@ const ProjectsProvider = ({ children }) => {
 
   //Send request to insert a new project
   const submitProject = async (project) => {
-
-    if(project.ID){
+    if (project.ID) {
       editProject(project);
-    }else{
+    } else {
       newProject(project);
     }
-      
   };
 
   const editProject = async (project) => {
@@ -56,21 +54,27 @@ const ProjectsProvider = ({ children }) => {
           Authorization: `Bearer ${token}`,
         },
       };
-      const { data } = await axiosClient.put(`/projects/${project.ID}`, project, config);
-      console.log(data)
+      const { data } = await axiosClient.put(
+        `/projects/${project.ID}`,
+        project,
+        config
+      );
+
       //Sync the data with the state
-      const projectsUpdated = projects.map( p => p._id === data._id ? data : p)
+      const projectsUpdated = projects.map((p) =>
+        p._id === data._id ? data : p
+      );
       setProjects(projectsUpdated);
+
       setTimeout(() => {
         navigate('/projects');
       }, 3000);
-      
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
+  };
 
-  const newProject = async (project) =>{
+  const newProject = async (project) => {
     try {
       const token = localStorage.getItem('token');
       if (!token) return;
@@ -83,14 +87,15 @@ const ProjectsProvider = ({ children }) => {
         },
       };
       const { data } = await axiosClient.post('/projects', project, config);
+      //Sync the data with the state
       setProjects([...projects, data]);
       setTimeout(() => {
         navigate('/projects');
-      }, 3000);
+      }, 2000);
     } catch (error) {
       console.log(error);
     }
-  }
+  };
 
   //Send request to get a project by id
   const getProject = async (id) => {
@@ -110,8 +115,37 @@ const ProjectsProvider = ({ children }) => {
       setProject(data);
     } catch (error) {
       console.log(error);
-    } finally{
-       setLoading(false);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const deleteProject = async (id) => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+
+      //Headers config
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      };
+
+      const { data } = await axiosClient.delete(`/projects/${id}`, config);
+      alert(data.msg);
+      //Sync the data with the state
+      const projectsUpdated = projects.filter(
+        (projectState) => projectState._id !== id
+      );
+      setProjects(projectsUpdated);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setTimeout(() => {
+        navigate('/projects');
+      }, 2000);
     }
   };
 
@@ -122,7 +156,8 @@ const ProjectsProvider = ({ children }) => {
         submitProject,
         getProject,
         project,
-        loading
+        loading,
+        deleteProject,
       }}
     >
       {children}

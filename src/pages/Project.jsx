@@ -37,6 +37,7 @@ const Project = () => {
 
         <Link
             to={`/projects/edit/${id}`}
+            className="uppercase font-bold"
         >
             Edit
         </Link>
