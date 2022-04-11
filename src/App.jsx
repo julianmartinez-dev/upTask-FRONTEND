@@ -11,6 +11,7 @@ import ConfirmAccount from './pages/ConfirmAccount';
 import Projects from './pages/Projects';
 import Project from './pages/Project';
 import NewProject from './pages/NewProject';
+import EditProject from './pages/EditProject';
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
               <Route index element={<Projects />} />
               <Route path="new-project" element={<NewProject />} />
               <Route path=":id" element={<Project />} />
+              <Route path="edit/:id" element={<EditProject />} />
             </Route>
           </Routes>
         </ProjectsProvider>

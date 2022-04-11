@@ -1,4 +1,3 @@
-import React from 'react'
 import FormProject from '../components/FormProject';
 
 const NewProject = () => {
