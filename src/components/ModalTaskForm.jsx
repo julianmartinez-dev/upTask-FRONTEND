@@ -16,7 +16,7 @@ const ModalTaskForm = () => {
   const { id } = useParams();
 
 
-  const handleSubmit = e =>{
+  const handleSubmit = async e =>{
       e.preventDefault()
       if([name,description,priority,deliveryDate].includes('')){
           setAlert({ msg: 'Please fill all fields', error: true })     
@@ -25,8 +25,13 @@ const ModalTaskForm = () => {
           }, 3000);
           return
       }
-        submitTask({ name, description, priority, deliveryDate, project : id})
-      
+        await submitTask({ name, description, priority, deliveryDate, project : id})
+
+        //Reset the form
+        setName('');
+        setDescription('');
+        setDeliveryDate('');
+        setPriority('');
 
   }
 
