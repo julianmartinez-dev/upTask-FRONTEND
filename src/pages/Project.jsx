@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import useProjects from '../hooks/useProjects';
 import Loading from '../components/Loading';
 import ModalTaskForm from '../components/ModalTaskForm';
+import ModalDeleteTask from '../components/ModalDeleteTask';
 import Task from '../components/Task';
 
 const Project = () => {
@@ -73,6 +74,7 @@ const Project = () => {
       </div>
 
       <ModalTaskForm/>
+      <ModalDeleteTask />
     </>
   );
 };

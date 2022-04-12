@@ -1,10 +1,12 @@
 import { Fragment, useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Dialog, Transition } from '@headlessui/react';
+import { formatDate } from '../helpers/formatDate.js';
 import useProjects from '../hooks/useProjects';
 import Alert from './Alert';
 
 const ModalTaskForm = () => {
+  const [taskID, setTaskID] = useState('');
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [deliveryDate, setDeliveryDate] = useState(''); 
@@ -12,8 +14,24 @@ const ModalTaskForm = () => {
 
   const [alert, setAlert] = useState({})
 
-  const { modalTaskForm, handleModalTask, submitTask,project } = useProjects();
+  const { modalTaskForm, handleModalTask, submitTask,project, task } = useProjects();
   const { id } = useParams();
+
+  useEffect(() => {
+    if (task?._id) {
+      setTaskID(task._id);
+      setName(task.name);
+      setDescription(task.description);
+      setDeliveryDate(task.deliveryDate?.split('T')[0]);
+      setPriority(task.priority);
+    }else{
+      setTaskID('');
+      setName('');
+      setDescription('');
+      setDeliveryDate('');
+      setPriority('');
+    }
+  },[task])
 
 
   const handleSubmit = async e =>{
@@ -25,9 +43,10 @@ const ModalTaskForm = () => {
           }, 3000);
           return
       }
-        await submitTask({ name, description, priority, deliveryDate, project : id})
+        await submitTask({ id: taskID, name, description, priority, deliveryDate, project : id})
 
         //Reset the form
+        setTaskID('');
         setName('');
         setDescription('');
         setDeliveryDate('');
@@ -102,7 +121,7 @@ const ModalTaskForm = () => {
                     as="h3"
                     className="text-2xl leading-6 font-bold text-gray-900"
                   >
-                    New Task
+                    {taskID? 'Edit Task' : 'Add Task'}
                   </Dialog.Title>
 
                   <form action="" className="my-10" onSubmit={handleSubmit}>
@@ -180,7 +199,7 @@ const ModalTaskForm = () => {
 
                     <input
                       type="submit"
-                      value="Add Task"
+                      value={taskID ? 'Save Changes' : 'Add Task'}
                       className="py-2 px-4 uppercase font-bold bg-sky-500 text-white text-center w-full rounded-md hover:cursor-pointer mt-3 hover:bg-sky-600 transition-colors"
                     />
                     {msg && <Alert alert={alert} />}
