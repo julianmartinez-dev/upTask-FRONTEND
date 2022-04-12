@@ -8,6 +8,7 @@ const ProjectsProvider = ({ children }) => {
   const [projects, setProjects] = useState([]);
   const [project, setProject] = useState({});
   const [loading, setLoading] = useState(false);
+  const [modalTaskForm, setModalTaskForm] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -149,6 +150,35 @@ const ProjectsProvider = ({ children }) => {
     }
   };
 
+
+  const handleModalTask = () =>{
+    setModalTaskForm(!modalTaskForm);
+  }
+
+  //Send request to insert a new task
+  const submitTask = async (task) => {
+
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+
+      //Headers config
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      };
+
+      const { data } = await axiosClient.post('/tasks', task ,config)
+      console.log(data)
+      
+    } catch (error) {
+      console.log(error)
+      
+    }
+  }
+
   return (
     <ProjectsContext.Provider
       value={{
@@ -158,6 +188,9 @@ const ProjectsProvider = ({ children }) => {
         project,
         loading,
         deleteProject,
+        modalTaskForm,
+        handleModalTask,
+        submitTask
       }}
     >
       {children}
