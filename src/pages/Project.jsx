@@ -5,11 +5,14 @@ import useProjects from '../hooks/useProjects';
 import Loading from '../components/Loading';
 import ModalTaskForm from '../components/ModalTaskForm';
 import ModalDeleteTask from '../components/ModalDeleteTask';
+import ModalDeleteCollaborator from '../components/ModalDeleteCollaborator';
 import Task from '../components/Task';
+import Collaborator from '../components/Collaborator';
+import Alert from '../components/Alert';
 
 const Project = () => {
   const { id } = useParams();
-  const { getProject, project, loading, handleModalTask } = useProjects();
+  const { getProject, project, loading, handleModalTask,alert } = useProjects();
 
   useEffect(() => {
     getProject(id);
@@ -17,6 +20,7 @@ const Project = () => {
 
   if (loading) return <Loading />;
 
+  const { msg } = alert;
   return (
     <>
       <div className="flex justify-between md:mt-3">
@@ -64,6 +68,8 @@ const Project = () => {
         New Task
       </button>
 
+      {msg && <Alert alert={alert} />}
+
       <p className="font-bold text-xl mt-10">Project Tasks</p>
       <div className="bg-white shadow mt-10 rounded-lg">
         {project.tasks?.length ? (
@@ -85,8 +91,21 @@ const Project = () => {
         </Link>
       </div>
 
+      <div className="bg-white shadow mt-10 rounded-lg text-center">
+        {project.members?.length ? (
+          project.members.map((member) => (
+            <Collaborator key={member._id} member={member} />
+          ))
+        ) : (
+          <p className="mt-5 text-center text-gray-600 uppercase p-5">
+            There's no member in this project
+          </p>
+        )}
+      </div>
+
       <ModalTaskForm />
       <ModalDeleteTask />
+      <ModalDeleteCollaborator />
     </>
   );
 };

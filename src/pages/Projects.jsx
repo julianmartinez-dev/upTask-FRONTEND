@@ -1,9 +1,13 @@
 import useProjects from '../hooks/useProjects';
+import { useEffect } from 'react';
 import PreviewProject from '../components/PreviewProject';
 
 const Projects = () => {
-  const { projects } = useProjects();
+  const { projects,getProjects } = useProjects();
 
+  useEffect(() => {
+    getProjects()
+  },[])
   return (
     <>
       <h1 className="text-4xl font-black">Projects</h1>
