@@ -8,12 +8,15 @@ const ProjectsProvider = ({ children }) => {
   const [projects, setProjects] = useState([]);
   const [project, setProject] = useState({});
   const [loading, setLoading] = useState(false);
+  const [alert, setAlert] = useState({});
   const [modalTaskForm, setModalTaskForm] = useState(false);
   const [task, setTask] = useState({})
   const [modalDeleteTask, setModalDeleteTask] = useState(false);
+  const [collaborator, setCollaborator] = useState({})
   const navigate = useNavigate();
 
   useEffect(() => {
+    console.log('obteniendo proyectos');
     const getProjects = async () => {
       try {
         const token = localStorage.getItem('token');
@@ -117,7 +120,7 @@ const ProjectsProvider = ({ children }) => {
       const { data } = await axiosClient(`/projects/${id}`, config);
       setProject(data);
     } catch (error) {
-      console.log(error);
+      setAlert({ msg: error.response.data.msg, error: true });
     } finally {
       setLoading(false);
     }
@@ -251,6 +254,52 @@ const ProjectsProvider = ({ children }) => {
     }
   }
 
+  const submitCollaborator = async (email) => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+
+      //Headers config
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      };
+
+      const { data } = await axiosClient.post('/projects/members',{email}, config )
+      setCollaborator(data)
+    } catch (error) {
+      setCollaborator({})
+      setAlert({ msg: error.response.data.msg, error: true });
+    }
+  }
+
+  const addCollaborator = async (email) => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+
+      //Headers config
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      };
+
+      const { data } = await axiosClient.post(`/projects/members/${project._id}`,{email}, config )
+      
+      setAlert({msg: data.msg, error: false})
+      setCollaborator({})
+      setTimeout(() => {
+        setAlert({})
+      }, 2000);
+    } catch (error) {
+       setAlert({error: true, msg: error.response.data.msg})
+    }
+  }
+
   return (
     <ProjectsContext.Provider
       value={{
@@ -268,6 +317,11 @@ const ProjectsProvider = ({ children }) => {
         modalDeleteTask,
         handleModalDeleteTask,
         deleteTask,
+        submitCollaborator,
+        collaborator,
+        addCollaborator,
+        alert,
+        setAlert
       }}
     >
       {children}

@@ -10,7 +10,6 @@ import Task from '../components/Task';
 const Project = () => {
   const { id } = useParams();
   const { getProject, project, loading, handleModalTask } = useProjects();
-  
 
   useEffect(() => {
     getProject(id);
@@ -65,15 +64,28 @@ const Project = () => {
         New Task
       </button>
 
-      <p className='font-bold text-xl mt-10'>Project Tasks</p>
+      <p className="font-bold text-xl mt-10">Project Tasks</p>
       <div className="bg-white shadow mt-10 rounded-lg">
-        { project.tasks?.length
-          ?  project.tasks?.map(task => <Task key={task._id} task={task} />) 
-          : <p className='text-center py-10 font-bold text-slate-700 uppercase'>No tasks to show</p> 
-        }
+        {project.tasks?.length ? (
+          project.tasks?.map((task) => <Task key={task._id} task={task} />)
+        ) : (
+          <p className="text-center py-10 font-bold text-slate-700 uppercase">
+            No tasks to show
+          </p>
+        )}
       </div>
 
-      <ModalTaskForm/>
+      <div className="flex items-center justify-between mt-10">
+        <p className="font-bold text-xl mt-10">Collaborators</p>
+        <Link
+          to={`/projects/new-collaborator/${project._id}`}
+          className="uppercase font-bold text-gray-400 hover:text-black"
+        >
+          Add collaborator
+        </Link>
+      </div>
+
+      <ModalTaskForm />
       <ModalDeleteTask />
     </>
   );

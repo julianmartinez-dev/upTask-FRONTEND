@@ -12,6 +12,7 @@ import Projects from './pages/Projects';
 import Project from './pages/Project';
 import NewProject from './pages/NewProject';
 import EditProject from './pages/EditProject';
+import NewCollaborator from './pages/NewCollaborator';
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
             <Route path="/projects" element={<ProtectedRoute />}>
               <Route index element={<Projects />} />
               <Route path="new-project" element={<NewProject />} />
+              <Route path="new-collaborator/:id" element={<NewCollaborator />} />
               <Route path=":id" element={<Project />} />
               <Route path="edit/:id" element={<EditProject />} />
             </Route>
