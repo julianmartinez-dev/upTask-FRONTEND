@@ -5,7 +5,8 @@ import useAdmin from "../hooks/useAdmin.jsx";
 const Task = ({ task }) => {
   const { name, description, _id, priority, deliveryDate, status } = task;
 
-  const { handleModalTaskEdit, handleModalDeleteTask } = useProjects();
+  const { handleModalTaskEdit, handleModalDeleteTask, completeTask } =
+    useProjects();
   const admin = useAdmin();
 
   return (
@@ -49,15 +50,14 @@ const Task = ({ task }) => {
           </button>
         )}
 
-        {status ? (
-          <button className="bg-sky-600 px-4 py-3 font-bold uppercase text-sm rounded-lg text-white">
-            Complete
-          </button>
-        ) : (
-          <button className="bg-slate-600 px-4 py-3 font-bold uppercase text-sm rounded-lg text-white">
-            Incomplete
-          </button>
-        )}
+        <button
+          className={`${
+            status ? 'bg-green-600' : 'bg-gray-600'
+          } px-4 py-3 font-bold uppercase text-sm rounded-lg text-white`}
+          onClick={() => completeTask(_id)}
+        >
+          {status ? 'Mark as incomplete' : 'Mark as complete'}
+        </button>
       </div>
     </div>
   );
