@@ -16,7 +16,7 @@ const PreviewProject = ({project}) => {
 
       <Link
         to={`${_id}`}
-        className="md:ml-auto text-gray-600 hover:text-gray-800 font-bold uppercase"
+        className="ml-auto text-gray-600 hover:text-gray-800 font-bold uppercase"
       >
         Show Project
       </Link>
