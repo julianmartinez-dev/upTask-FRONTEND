@@ -10,15 +10,61 @@ import ModalDeleteCollaborator from '../components/ModalDeleteCollaborator';
 import Task from '../components/Task';
 import Collaborator from '../components/Collaborator';
 import Alert from '../components/Alert';
+import io from 'socket.io-client';
+
+let socket;
+
 
 const Project = () => {
   const { id } = useParams();
-  const { getProject, project, loading, handleModalTask,alert } = useProjects();
+  const {
+    getProject,
+    project,
+    loading,
+    handleModalTask,
+    alert,
+    submitProjectTasks,
+    deleteTaskProject,
+    editTaskProject,
+    completeTaskProject,
+  } = useProjects();
   const admin = useAdmin();
 
   useEffect(() => {
     getProject(id);
   }, []);
+
+  useEffect(() => {
+    socket = io(import.meta.env.VITE_BACKEND_URL)
+    socket.emit('open project', id)
+  },[])
+
+  useEffect(() => {
+    socket.on('taskAdded', (newTask) =>{
+      if(newTask.project === project._id){
+        submitProjectTasks(newTask)
+      }
+    })
+
+    socket.on('taskDeleted', taskDeleted =>{
+      if(taskDeleted.project === project._id){
+        deleteTaskProject(taskDeleted);
+      }
+    })
+
+    socket.on('taskEdited', taskEdited =>{
+      if(taskEdited.project._id === project._id){
+        editTaskProject(taskEdited);
+      }
+    })
+
+    socket.on('taskCompleted', taskCompleted =>{
+      if(taskCompleted.project._id === project._id){
+        completeTaskProject(taskCompleted);
+      }
+    })
+  })
+ 
 
   if (loading) return <Loading />;
 

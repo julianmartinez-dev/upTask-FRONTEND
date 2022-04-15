@@ -3,11 +3,11 @@ import { useEffect } from 'react';
 import PreviewProject from '../components/PreviewProject';
 
 const Projects = () => {
-  const { projects,getProjects } = useProjects();
+  const { projects, getProjects } = useProjects();
 
   useEffect(() => {
-    getProjects()
-  },[])
+    getProjects();
+  }, []);
   return (
     <>
       <h1 className="text-4xl font-black">Projects</h1>

@@ -1,6 +1,9 @@
 import { useState, useEffect, createContext } from 'react';
 import axiosClient from '../config/axiosClient';
 import { useNavigate } from 'react-router-dom';
+import io from 'socket.io-client';
+
+let socket;
 
 const ProjectsContext = createContext();
 
@@ -38,6 +41,11 @@ const ProjectsProvider = ({ children }) => {
   useEffect(() => {
     getProjects();
   }, []);
+
+  useEffect(() => {
+    socket = io(import.meta.env.VITE_BACKEND_URL)
+   
+  },[])
 
   //Send request to insert a new project
   const submitProject = async (project) => {
@@ -188,9 +196,7 @@ const ProjectsProvider = ({ children }) => {
       const { data } = await axiosClient.put(`/tasks/${task.id}`, task, config);
 
       //Add task to state
-      const projectUpdated = {...project};
-      projectUpdated.tasks = projectUpdated.tasks.map ( taskState => taskState._id === data._id ? data : taskState);
-      setProject(projectUpdated);
+      socket.emit('editTask', data);
       handleModalTask()
     } catch (error) {
       console.log(error)
@@ -211,9 +217,12 @@ const ProjectsProvider = ({ children }) => {
 
       const { data } = await axiosClient.post('/tasks', task, config);
       //Add task to state
-      const projectUpdated = { ...project, tasks: [...project.tasks, data] };
-      setProject(projectUpdated);
+      // const projectUpdated = { ...project, tasks: [...project.tasks, data] };
+      // setProject(projectUpdated);
       handleModalTask();
+
+      //Socket.io
+      socket.emit('newTask', data)
     } catch (error) {
       console.log(error);
     }
@@ -248,11 +257,13 @@ const ProjectsProvider = ({ children }) => {
        };
 
         const { data } = await axiosClient.delete(`/tasks/${task._id}`,config);
-        //Add task to state
-        const projectUpdated = { ...project };
-        projectUpdated.tasks = projectUpdated.tasks.filter ( taskState => taskState._id !== task._id);
-        setProject(projectUpdated);
+        
         setModalDeleteTask(false);
+        
+        //SOCKET
+        socket.emit('deleteTask', task)
+
+
         setTask({});
     } catch (error) {
       console.log(error)
@@ -352,9 +363,8 @@ const ProjectsProvider = ({ children }) => {
 
       const { data } = await axiosClient.post(`/tasks/status/${id}`,{}, config )
       
-      const projectUpdated = {...project}
-      projectUpdated.tasks = projectUpdated.tasks.map( taskState => taskState._id === data._id ? data : taskState)
-      setProject(projectUpdated);
+      socket.emit('completeTask', data)
+
       setTask({});
       setAlert({})
     } catch (error) {
@@ -364,6 +374,45 @@ const ProjectsProvider = ({ children }) => {
 
   const handleSearcher = () =>{
     setSearcher(!searcher)
+  }
+
+  //Socket.io
+
+  const submitProjectTasks = (task) =>{
+    const projectUpdated = {...project}
+    projectUpdated.tasks = [...projectUpdated.tasks, task];
+    setProject(projectUpdated)
+  }
+
+  const deleteTaskProject = (task) =>{
+    //Add task to state
+    const projectUpdated = { ...project };
+    projectUpdated.tasks = projectUpdated.tasks.filter(
+      (taskState) => taskState._id !== task._id
+    );
+    setProject(projectUpdated);
+  }
+
+  const editTaskProject = (task) =>{
+    const projectUpdated = { ...project };
+    projectUpdated.tasks = projectUpdated.tasks.map((taskState) =>
+      taskState._id === task._id ? task : taskState
+    );
+    setProject(projectUpdated);
+  }
+
+  const completeTaskProject = (task) =>{
+    const projectUpdated = { ...project };
+    projectUpdated.tasks = projectUpdated.tasks.map((taskState) =>
+      taskState._id === task._id ? task : taskState
+    );
+    setProject(projectUpdated);
+  }
+
+  const logoutProjects = () =>{
+    setProject({})
+    setProjects([])
+    setAlert({})
   }
 
   return (
@@ -395,6 +444,11 @@ const ProjectsProvider = ({ children }) => {
         completeTask,
         searcher,
         handleSearcher,
+        submitProjectTasks,
+        deleteTaskProject,
+        editTaskProject,
+        completeTaskProject,
+        logoutProjects,
       }}
     >
       {children}
